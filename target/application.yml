@@ -1,0 +1,33 @@
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    
+spring:
+  application.name: address-book-service
+  mvc.servlet.load-on-startup: 1
+  datasource:
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+      poolName: HikariPoolZZZ
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: update
+    properties.hibernate.flushMode: ALWAYS
+    show-sql: true
+    properties.format_sql: true
+    properties.hibernate.generate_statistics: false
+    url: jdbc:h2:file:C:/data/addressbook_db;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1
+  h2:
+    console.path: /h2
+
+    
+server:
+  port: 8762
+  
+swagger.enabled: true
+
+
