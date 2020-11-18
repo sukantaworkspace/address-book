@@ -69,22 +69,22 @@ the phn no can be same for different name it's allowed, data will be stored succ
 if two values are new and only diference is case then the 
  latest one will override the previous one if there is a change either of the name and phn no.
 
--Input can be single data or multiple data and multiple data can be allowed maximum of 1000 rows at a time 
+- Input can be single data or multiple data and multiple data can be allowed maximum of 1000 rows at a time 
 where each and every row contains only name and number 
 
--If there is same name but the phn no is different, it will override the existing one which will work as update of records here
+- If there is same name but the phn no is different, it will override the existing one which will work as update of records here
 to manage the concurrent session used h2db along with transactional of spring and hibernate session
 
--There is a validation of name and phn no, if there is a wrong input given for adding ther records, considered phn no of 10 digits long
+- There is a validation of name and phn no, if there is a wrong input given for adding ther records, considered phn no of 10 digits long
 Name conatins spaces and alphabets only
 
--For the other address book, there is no feature for file upload. One need to call the API with the info and it's considered only name while doing the union
+- For the other address book, there is no feature for file upload. One need to call the API with the info and it's considered only name while doing the union
 of the relative complements, consider only name for fetching and case in sensitive and it's considered that other address book contains valid name
  due to short span of time page table is not implemented but it would be an added feature 
 
--assuming it's an open rest api exposed to public, where any user can access it without any api key or JWT
+- Assuming it's an open rest api exposed to public, where any user can access it without any api key or JWT
 validation
--Unit test case is available for service only, which is 85% covered, as the main business logic is the service end
+- Unit test case is available for service only, which is 85% covered, as the main business logic is the service end
 
 ---
 
