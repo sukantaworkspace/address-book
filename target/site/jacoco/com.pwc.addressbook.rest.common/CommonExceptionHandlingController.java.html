@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommonExceptionHandlingController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">address-book</a> &gt; <a href="index.source.html" class="el_package">com.pwc.addressbook.rest.common</a> &gt; <span class="el_source">CommonExceptionHandlingController.java</span></div><h1>CommonExceptionHandlingController.java</h1><pre class="source lang-java linenums">package com.pwc.addressbook.rest.common;
+
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.pwc.addressbook.rest.event.ResponseEvent;
+import com.pwc.addressbook.rest.exception.ErrorResponse;
+import com.pwc.addressbook.rest.exception.RestException;
+
+/**
+ * 
+ * @author Sukanta
+ * @since 30-Nov-2018
+ * @Purpose This object will return the custom exception in the rest call
+ */
+@RestController(&quot;commonExceptionHandlingController&quot;)
+<span class="fc" id="L23">public class CommonExceptionHandlingController {</span>
+	
+<span class="fc" id="L25">	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CommonExceptionHandlingController.class);</span>
+	
+	@ExceptionHandler(RestException.class)
+	public ResponseEntity&lt;ResponseEvent&lt;ErrorResponse&gt;&gt; exceptionHandler(Exception ex) {
+<span class="nc" id="L29">		LOGGER.info(&quot; Inside CommonExceptionHandlingController&quot; + ex.getClass());</span>
+<span class="nc" id="L30">		StringWriter sw = new StringWriter();</span>
+<span class="nc" id="L31">		PrintWriter pw = new PrintWriter(sw);</span>
+<span class="nc" id="L32">		ex.printStackTrace(pw);</span>
+<span class="nc" id="L33">		String stackTrace = sw.toString();</span>
+<span class="nc" id="L34">		LOGGER.error(&quot;Exception - &quot; + stackTrace);</span>
+<span class="nc" id="L35">		RestException restException = (RestException) ex;</span>
+<span class="nc" id="L36">		ErrorResponse error = new ErrorResponse();</span>
+<span class="nc" id="L37">		error.setErrorCode(restException.getErrorCode().value());</span>
+<span class="nc" id="L38">		error.setErrorMessage(restException.getErrorMessage());</span>
+<span class="nc" id="L39">		LOGGER.info(restException.getErrorMessage());</span>
+<span class="nc" id="L40">		return new ResponseEntity&lt;ResponseEvent&lt;ErrorResponse&gt;&gt;(ResponseEvent.errors(error), restException.getErrorCode());</span>
+	}
+
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

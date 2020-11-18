@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionAdvice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">address-book</a> &gt; <a href="index.source.html" class="el_package">com.pwc.addressbook.rest.advice</a> &gt; <span class="el_source">ExceptionAdvice.java</span></div><h1>ExceptionAdvice.java</h1><pre class="source lang-java linenums">package com.pwc.addressbook.rest.advice;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.pwc.addressbook.rest.event.ResponseEvent;
+import com.pwc.addressbook.rest.exception.ErrorResponse;
+
+/**
+ * 
+ * @author Sukanta
+ * @since 30-Nov-2018
+ * @Purpose This object will return the custom exception if REST API fails to handle
+ * any exception
+ */
+@ControllerAdvice
+<span class="fc" id="L20">public class ExceptionAdvice {</span>
+<span class="fc" id="L21">	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ExceptionAdvice.class);</span>
+	@SuppressWarnings(&quot;rawtypes&quot;)
+	@ExceptionHandler(Throwable.class)
+	public ResponseEntity&lt;ResponseEvent&gt; exceptionHandler(Exception ex) {
+<span class="nc" id="L25">		LOGGER.info(&quot;ExceptionAdvice:: For Exception&quot;);</span>
+		//ex.printStackTrace();
+<span class="nc" id="L27">		ErrorResponse error = new ErrorResponse();</span>
+<span class="nc" id="L28">		error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());</span>
+<span class="nc" id="L29">		error.setErrorMessage(&quot;Oops! Something went wrong. Please, contact your administrator.&quot;);</span>
+<span class="nc" id="L30">		return new ResponseEntity&lt;ResponseEvent&gt;(ResponseEvent.errors(error), HttpStatus.BAD_REQUEST);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

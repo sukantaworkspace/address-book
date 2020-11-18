@@ -1,0 +1,15 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+address-book,com.pwc.addressbook.rest.exception,RestException,17,0,0,0,7,0,5,0,5,0
+address-book,com.pwc.addressbook.rest.exception,ErrorResponse,17,0,0,0,7,0,5,0,5,0
+address-book,com.pwc.addressbook.model,AddressBookDto,0,54,0,0,0,15,0,9,0,9
+address-book,com.pwc.addressbook.rest.advice,ExceptionAdvice,21,7,0,0,5,2,1,2,1,2
+address-book,com.pwc.addressbook.service.impl,AddressBookServiceImpl,50,321,30,34,11,64,28,14,0,10
+address-book,com.pwc.addressbook.service.impl,AddressBookServiceImpl.new Comparator() {...},0,18,0,0,0,4,0,2,0,2
+address-book,com.pwc.addressbook.entity,AddressBookEntity,139,29,30,0,32,12,19,7,4,7
+address-book,com.pwc.addressbook,AddressbookApplication,5,3,0,0,2,1,1,1,1,1
+address-book,com.pwc.addressbook.rest.common,CommonExceptionHandlingController,62,7,0,0,12,2,1,2,1,2
+address-book,com.pwc.addressbook.util,AddressBookConstants,3,7,0,0,1,2,1,1,1,1
+address-book,com.pwc.addressbook.rest.controller,AddressBookController,149,7,10,0,35,2,8,2,3,2
+address-book,com.pwc.addressbook.rest.event,ResponseEvent,54,0,0,0,20,0,11,0,11,0
+address-book,com.pwc.addressbook.config,SwaggerDocumentationConfiguration,0,103,0,0,0,28,0,5,0,5
+address-book,com.pwc.addressbook.config,ApplicationConfig,0,9,0,0,0,3,0,2,0,2

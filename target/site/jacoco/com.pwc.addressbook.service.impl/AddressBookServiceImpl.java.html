@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressBookServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">address-book</a> &gt; <a href="index.source.html" class="el_package">com.pwc.addressbook.service.impl</a> &gt; <span class="el_source">AddressBookServiceImpl.java</span></div><h1>AddressBookServiceImpl.java</h1><pre class="source lang-java linenums">package com.pwc.addressbook.service.impl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.pwc.addressbook.entity.AddressBookEntity;
+import com.pwc.addressbook.model.AddressBookDto;
+import com.pwc.addressbook.repository.AddressBookRepository;
+import com.pwc.addressbook.service.AddressBookService;
+import com.pwc.addressbook.util.AddressBookConstants;
+
+@Service(&quot;addressBookService&quot;)
+@Transactional
+<span class="fc" id="L27">public class AddressBookServiceImpl implements AddressBookService {</span>
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private AddressBookRepository addressBookRepository;
+
+	private AddressBookDto convertToDto(AddressBookEntity adbEntity) {
+<span class="fc" id="L36">		AddressBookDto adbDto = modelMapper.map(adbEntity, AddressBookDto.class);</span>
+<span class="fc" id="L37">		return adbDto;</span>
+	}
+
+	@Override
+	public List&lt;AddressBookDto&gt; fetchAllInfo() {
+<span class="fc" id="L42">		List&lt;AddressBookDto&gt; adbDtoList = null;</span>
+<span class="fc" id="L43">		List&lt;AddressBookEntity&gt; adbEntityList = null;</span>
+<span class="fc" id="L44">		Sort.Order order = new Sort.Order(Sort.Direction.ASC, &quot;name&quot;).ignoreCase();</span>
+<span class="fc" id="L45">		adbEntityList = addressBookRepository.findAll(Sort.by(order));</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">		if (adbEntityList != null &amp;&amp; adbEntityList.size() &gt; 0) {</span>
+<span class="fc" id="L47">			adbDtoList = adbEntityList.stream().map(this::convertToDto).collect(Collectors.toList());</span>
+		}
+<span class="fc" id="L49">		return adbDtoList;</span>
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public List&lt;AddressBookDto&gt; addInfo(List&lt;AddressBookDto&gt; addressBookDtoList) throws Exception {
+
+<span class="fc" id="L56">		Map&lt;String, AddressBookEntity&gt; adbEntityListMap = new HashMap&lt;String, AddressBookEntity&gt;();</span>
+<span class="fc" id="L57">		Map&lt;String, AddressBookEntity&gt; adbEntityListMapPersist = new HashMap&lt;String, AddressBookEntity&gt;();</span>
+<span class="fc" id="L58">		List&lt;AddressBookEntity&gt; adbEntityList = null;</span>
+<span class="fc" id="L59">		List&lt;AddressBookEntity&gt; newAdbEntityList = null;</span>
+<span class="fc" id="L60">		adbEntityList = addressBookRepository.findAll();</span>
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">		if (adbEntityList != null &amp;&amp; adbEntityList.size() &gt; 0) {</span>
+<span class="fc" id="L62">			adbEntityListMap = adbEntityList.stream()</span>
+<span class="fc" id="L63">					.collect(Collectors.toMap(a-&gt;a.getName().toUpperCase(), adbEntity -&gt; adbEntity));</span>
+		}
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		for (int index = 0; index &lt; addressBookDtoList.size(); index++) {</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">			if (StringUtils.isNotBlank(addressBookDtoList.get(index).getName())</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">					&amp;&amp; StringUtils.isNotBlank(addressBookDtoList.get(index).getPhnNumber())) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">				if (AddressBookConstants.NAME_REGEX_PATTERN.matcher(addressBookDtoList.get(index).getName()).find()</span>
+<span class="fc" id="L69">						&amp;&amp; AddressBookConstants.PHN_NUMBER_REGEX_PATTERN</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">								.matcher(addressBookDtoList.get(index).getPhnNumber()).find()) {</span>
+<span class="fc" id="L71">					AddressBookEntity l_adbEntity = null;</span>
+<span class="fc" id="L72">					l_adbEntity = adbEntityListMap.get(addressBookDtoList.get(index).getName().toUpperCase());</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">					if (l_adbEntity != null &amp;&amp; StringUtils.isNotBlank(l_adbEntity.getName())</span>
+<span class="pc bpc" id="L74" title="3 of 4 branches missed.">							&amp;&amp; l_adbEntity.getId() != null &amp;&amp; l_adbEntity.getId() &gt; 0) {</span>
+<span class="nc" id="L75">						if (!StringUtils.equals(l_adbEntity.getPhnNumber(),</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">								addressBookDtoList.get(index).getPhnNumber())) {</span>
+<span class="nc" id="L77">							l_adbEntity.setName(addressBookDtoList.get(index).getName());</span>
+<span class="nc" id="L78">							l_adbEntity.setPhnNumber(addressBookDtoList.get(index).getPhnNumber());</span>
+<span class="nc" id="L79">						} else {</span>
+<span class="nc" id="L80">							l_adbEntity=null;</span>
+						}
+<span class="nc" id="L82">					} else {</span>
+<span class="fc" id="L83">						l_adbEntity = new AddressBookEntity();</span>
+<span class="fc" id="L84">						l_adbEntity.setName(addressBookDtoList.get(index).getName());</span>
+<span class="fc" id="L85">						l_adbEntity.setPhnNumber(addressBookDtoList.get(index).getPhnNumber());</span>
+					}
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">					if(l_adbEntity!=null) {</span>
+<span class="fc" id="L88">						adbEntityListMapPersist.put(l_adbEntity.getName().toUpperCase(), l_adbEntity);</span>
+					}
+<span class="fc" id="L90">					addressBookDtoList.get(index).setStatus(AddressBookConstants.SUCCESS_MSG);</span>
+<span class="fc" id="L91">				} else {</span>
+<span class="nc" id="L92">					addressBookDtoList.get(index).setStatus(AddressBookConstants.INVALID_MSG);</span>
+				}
+<span class="nc" id="L94">			} else {</span>
+<span class="nc" id="L95">				addressBookDtoList.get(index).setStatus(AddressBookConstants.INVALID_MSG);</span>
+			}
+		}
+<span class="pc bpc" id="L98" title="2 of 4 branches missed.">		if (adbEntityListMapPersist != null &amp;&amp; adbEntityListMapPersist.size() &gt; 0) {</span>
+<span class="fc" id="L99">			newAdbEntityList = new ArrayList&lt;AddressBookEntity&gt;(adbEntityListMapPersist.values());</span>
+<span class="pc bpc" id="L100" title="2 of 4 branches missed.">			if(newAdbEntityList!=null &amp;&amp; newAdbEntityList.size()&gt;0) {</span>
+<span class="fc" id="L101">				addressBookRepository.saveAll(newAdbEntityList);</span>
+			}
+		}
+
+<span class="fc" id="L105">		return addressBookDtoList;</span>
+
+	}
+
+	@Override
+	public List&lt;AddressBookDto&gt; getUniqueInfo(List&lt;AddressBookDto&gt; addressBookDtoList) throws Exception {
+<span class="fc" id="L111">		List&lt;String&gt; names = null;</span>
+<span class="fc" id="L112">		List&lt;AddressBookEntity&gt; adbEntityListIn = null;</span>
+<span class="fc" id="L113">		List&lt;AddressBookEntity&gt; adbEntityListNotIn = null;</span>
+<span class="fc" id="L114">		List&lt;AddressBookDto&gt; adbDtoList = null;</span>
+<span class="fc" id="L115">		AddressBookEntity l_addressBookEntity = null;</span>
+<span class="fc" id="L116">		Map&lt;String, AddressBookEntity&gt; adbEntityListMap = new HashMap&lt;String, AddressBookEntity&gt;();</span>
+		
+<span class="pc bpc" id="L118" title="2 of 4 branches missed.">		if (addressBookDtoList != null &amp;&amp; addressBookDtoList.size() &gt; 0) {</span>
+<span class="fc" id="L119">			names = addressBookDtoList.stream().map(adbDtoObj -&gt; adbDtoObj.getName().toUpperCase()).collect(Collectors.toList());</span>
+		}
+
+<span class="pc bpc" id="L122" title="2 of 4 branches missed.">		if (names != null &amp;&amp; names.size() &gt; 0) {</span>
+<span class="fc" id="L123">			adbEntityListIn = addressBookRepository.findByNamesIn(names);</span>
+<span class="fc" id="L124">			adbEntityListNotIn = addressBookRepository.findByNamesNotIn(names);</span>
+		}
+		
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">		if (adbEntityListIn != null &amp;&amp; adbEntityListIn.size() &gt; 0) {</span>
+<span class="fc" id="L128">			adbEntityListMap = adbEntityListIn.stream()</span>
+<span class="fc" id="L129">					.collect(Collectors.toMap(a-&gt;a.getName().toUpperCase(), adbEntity -&gt; adbEntity));</span>
+		}
+<span class="pc bpc" id="L131" title="2 of 4 branches missed.">		if (adbEntityListNotIn != null &amp;&amp; adbEntityListNotIn.size() &gt; 0) {</span>
+<span class="fc" id="L132">			adbDtoList = adbEntityListNotIn.stream().map(this::convertToDto).collect(Collectors.toList());</span>
+		}
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L135">			adbDtoList = new ArrayList&lt;AddressBookDto&gt;();</span>
+		}
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		for (AddressBookDto eachAdbDto : addressBookDtoList) {</span>
+<span class="fc" id="L138">			l_addressBookEntity = adbEntityListMap.get(eachAdbDto.getName().toUpperCase());</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">			if(l_addressBookEntity==null) {</span>
+<span class="fc" id="L140">				adbDtoList.add(eachAdbDto);</span>
+			}
+		}
+<span class="pc bpc" id="L143" title="2 of 4 branches missed.">		if(adbDtoList!=null &amp;&amp; adbDtoList.size()&gt;0) {</span>
+<span class="fc" id="L144">		Collections.sort(adbDtoList, new Comparator&lt;AddressBookDto&gt;() {</span>
+
+			public int compare(AddressBookDto adbDto1, AddressBookDto adbDto2) {
+<span class="fc" id="L147">			   String adbName1 = adbDto1.getName().toUpperCase();</span>
+<span class="fc" id="L148">			   String adbtName2 = adbDto2.getName().toUpperCase();</span>
+
+			   //ascending order
+<span class="fc" id="L151">			   return adbName1.compareTo(adbtName2);</span>
+		    }});
+		}
+<span class="fc" id="L154">		return adbDtoList;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

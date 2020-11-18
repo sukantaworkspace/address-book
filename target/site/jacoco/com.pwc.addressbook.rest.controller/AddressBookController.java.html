@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressBookController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">address-book</a> &gt; <a href="index.source.html" class="el_package">com.pwc.addressbook.rest.controller</a> &gt; <span class="el_source">AddressBookController.java</span></div><h1>AddressBookController.java</h1><pre class="source lang-java linenums">package com.pwc.addressbook.rest.controller;
+
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.pwc.addressbook.model.AddressBookDto;
+import com.pwc.addressbook.rest.common.CommonExceptionHandlingController;
+import com.pwc.addressbook.rest.event.ResponseEvent;
+import com.pwc.addressbook.rest.exception.RestException;
+import com.pwc.addressbook.service.AddressBookService;
+
+@RestController(&quot;addressBookController&quot;)
+@RequestMapping(&quot;/address-book&quot;)
+<span class="fc" id="L23">public class AddressBookController extends CommonExceptionHandlingController{ </span>
+	
+<span class="fc" id="L25">	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(AddressBookController.class);</span>
+	
+	@Autowired
+	private AddressBookService addressBookService;
+	
+	@Autowired
+	private HttpServletRequest request;
+
+	/**
+	 * 
+	 * @return ResponseEntity as list of category, all null values in object will be ignored
+	 * @throws Exception
+	 */
+	@RequestMapping(value={&quot;/v1.0/get-all-info&quot;, &quot;/v1.1/get-all-info&quot;},method= RequestMethod.GET, produces = {&quot;application/json&quot;, &quot;application/xml&quot;})
+    public ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt; getAllInfo() throws Exception { 
+<span class="nc" id="L40">		LOGGER.info(&quot;sessionID: &quot;+request.getHeader(&quot;AUTH_HEADER&quot;)+ &quot;=====&gt; get-all-info&quot;);</span>
+<span class="nc" id="L41">		List&lt;AddressBookDto&gt; adbDtoList = null;</span>
+<span class="nc" id="L42">		adbDtoList=addressBookService.fetchAllInfo();</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L44">			RestException restException = new RestException();</span>
+<span class="nc" id="L45">			restException.setErrorCode(HttpStatus.NO_CONTENT);</span>
+<span class="nc" id="L46">			restException.setErrorMessage(&quot;No information found&quot;);</span>
+<span class="nc" id="L47">			throw restException;</span>
+		}
+<span class="nc" id="L49">		return new ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt;(ResponseEvent.response(adbDtoList), HttpStatus.OK);</span>
+		
+	}
+	
+	/**
+	 * 
+	 * @return ResponseEntity as list of category, all null values in object will be ignored
+	 * @throws Exception
+	 */
+	@RequestMapping(value={&quot;/v1.1/add-info&quot;},method= RequestMethod.POST, consumes = {&quot;application/json&quot;, &quot;application/xml&quot;}, produces = {&quot;application/json&quot;, &quot;application/xml&quot;})
+    public ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt; addInfo(@RequestBody List&lt;AddressBookDto&gt; adbDtoList) throws Exception {
+<span class="nc" id="L60">		LOGGER.info(&quot;sessionID: &quot;+request.getHeader(&quot;AUTH_HEADER&quot;)+ &quot;=====&gt; add-info&quot;);</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L62">			RestException restException = new RestException();</span>
+<span class="nc" id="L63">			restException.setErrorCode(HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L64">			restException.setErrorMessage(&quot;Data can not be empty !!&quot;);</span>
+<span class="nc" id="L65">			throw restException;</span>
+		}
+<span class="nc" id="L67">		adbDtoList=addressBookService.addInfo(adbDtoList);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L69">			RestException restException = new RestException();</span>
+<span class="nc" id="L70">			restException.setErrorCode(HttpStatus.EXPECTATION_FAILED);</span>
+<span class="nc" id="L71">			restException.setErrorMessage(&quot;Failed to save information&quot;);</span>
+<span class="nc" id="L72">			throw restException;</span>
+		}
+<span class="nc" id="L74">		return new ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt;(ResponseEvent.response(adbDtoList), HttpStatus.OK);</span>
+		
+	}
+	
+	/**
+	 * 
+	 * @return ResponseEntity as list of category, all null values in object will be ignored
+	 * @throws Exception
+	 */
+	@RequestMapping(value={&quot;/v1.1/get-unique-info&quot;},method= RequestMethod.POST, consumes = {&quot;application/json&quot;, &quot;application/xml&quot;}, produces = {&quot;application/json&quot;, &quot;application/xml&quot;})
+    public ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt; getUniqueInfo(@RequestBody List&lt;AddressBookDto&gt; adbDtoList) throws Exception {
+<span class="nc" id="L85">		LOGGER.info(&quot;sessionID: &quot;+request.getHeader(&quot;AUTH_HEADER&quot;)+ &quot;=====&gt; get-unique-info&quot;);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L87">			RestException restException = new RestException();</span>
+<span class="nc" id="L88">			restException.setErrorCode(HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L89">			restException.setErrorMessage(&quot;Data can not be empty !!&quot;);</span>
+<span class="nc" id="L90">			throw restException;</span>
+		}
+<span class="nc" id="L92">		adbDtoList=addressBookService.getUniqueInfo(adbDtoList);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if(adbDtoList==null) {</span>
+<span class="nc" id="L94">			RestException restException = new RestException();</span>
+<span class="nc" id="L95">			restException.setErrorCode(HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L96">			restException.setErrorMessage(&quot;No union of the relative complements data is found&quot;);</span>
+<span class="nc" id="L97">			throw restException;</span>
+		}
+<span class="nc" id="L99">		return new ResponseEntity&lt;ResponseEvent&lt;List&lt;AddressBookDto&gt;&gt;&gt;(ResponseEvent.response(adbDtoList), HttpStatus.OK);</span>
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
